@@ -149,7 +149,7 @@ for image_path in image_paths:
     while True:
         if attempts >= max_attempts:
             print("WARNING: Maximum attempts reached")
-            continue
+            break
         try:
             synthetic_image_cropped = align_and_crop(synthetic_image)
             break
