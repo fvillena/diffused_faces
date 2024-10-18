@@ -46,6 +46,14 @@ parser.add_argument(
     required=False,
 )
 
+parser.add_argument(
+    "--start_from",
+    type=str,
+    default=None,
+    help="Start from a specific filename",
+    required=False,
+)
+
 args = parser.parse_args()
 
 if args.model == "sdxl":
@@ -155,7 +163,13 @@ def generate_and_save_image(filename, prompt, n=1):
                 exif=synthetic_image_cropped_exif,
             )
 
-for filename, caption in captions.data.items():
+filenames = list(captions.data.keys())
+if args.start_from:
+    start_index = filenames.index(args.start_from)
+    filenames = filenames[start_index:]
+
+for filename in filenames:
+    caption = captions.data[filename]
     #is the image is in the directory, then we skip it
     if (args.output_dir / f"{filename}_synthetic.png").exists():
         continue
