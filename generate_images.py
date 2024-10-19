@@ -1,6 +1,6 @@
 from pathlib import Path
 from PIL import Image
-from diffusers import DiffusionPipeline
+from diffusers import DiffusionPipeline, FluxPipeline
 import torch
 from FFHQFaceAlignment.align import *
 import argparse
@@ -103,7 +103,18 @@ elif args.model == "realvisxl":
             negative_prompt="face asymmetry, eyes asymmetry, deformed eyes",
         ).images[0]
         return image
-
+elif args.model == "flux":
+    pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-dev", torch_dtype=torch.bfloat16, device_map="balanced")
+    def generate_image(prompt):
+        image = pipe(
+            prompt,
+            height=1024,
+            width=1024,
+            guidance_scale=3.5,
+            num_inference_steps=50,
+            max_sequence_length=512,
+        ).images[0]
+        return image
 else:
     raise ValueError("Invalid model")
 
